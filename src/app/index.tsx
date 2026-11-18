@@ -1,98 +1,120 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from "react";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
+} from "react-native";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+import CourseCard from "../components/CourseCard";
+
+type Course = {
+  id: string;
+  code: string;
+  title: string;
+  units: number;
+  schedule: string;
+};
+
+export default function CourseCatalog() {
+  const [courses, setCourses] = useState<Course[]>([
+    {
+      id: "c1",
+      code: "IT313",
+      title: "Mobile Programming",
+      units: 3,
+      schedule: "MWF 8:00-9:00 AM",
+    },
+    {
+      id: "c2",
+      code: "IT311",
+      title: "Systems Integration",
+      units: 3,
+      schedule: "TTh 9:30-11:00 AM",
+    },
+    {
+      id: "c3",
+      code: "IT321",
+      title: "Information Assurance",
+      units: 3,
+      schedule: "MWF 1:00–2:00 PM",
+    },
+    {
+      id: "c4",
+      code: "IT331",
+      title: "Web Systems & Technologies",
+      units: 3,
+      schedule: "TTh 1:00–2:30 PM",
+    },
+    {
+      id: "c5",
+      code: "IT341",
+      title: "Human-Computer Interaction",
+      units: 3,
+      schedule: "MWF 3:00–4:00 PM",
+    },
+  ]);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>IT313 Course Catalog</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        <Text style={styles.headerSubtitle}>
+          {courses.length} courses this semester
+        </Text>
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+      <ScrollView
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={true}
+      >
+        {courses.map((course) => (
+          <CourseCard
+            key={course.id}
+            id={course.id}
+            code={course.code}
+            title={course.title}
+            units={course.units}
+            schedule={course.schedule}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#F7F7F7",
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+
+  header: {
+    backgroundColor: "#191650",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+
+  headerTitle: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "bold",
   },
-  title: {
-    textAlign: 'center',
+
+  headerSubtitle: {
+    color: "#C6C3DF",
+    fontSize: 14,
+    marginTop: 5,
   },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  list: {
+    paddingTop: 18,
+    paddingBottom: 25,
   },
 });
